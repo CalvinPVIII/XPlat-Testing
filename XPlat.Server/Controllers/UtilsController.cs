@@ -10,13 +10,11 @@ namespace XPlat.Controllers
     public class UtilsController : WebApiController
     {
         private readonly string _databasesFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "databases");
-        private readonly JokeTrackerDbContext _context;
         private readonly CurrentDbService _dbService;
 
-        public UtilsController(CurrentDbService dbService, JokeTrackerDbContext context)
+        public UtilsController(CurrentDbService dbService)
         {
             _dbService = dbService;
-            _context = context;
         }
 
 

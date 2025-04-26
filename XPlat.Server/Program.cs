@@ -16,15 +16,6 @@ services.AddSingleton<CurrentDbService>(provider =>
     };
 });
 
-services.AddSingleton<JokeDbContextFactory>();
-
-// Use this if you want controllers to be able to receive a fresh DbContext directly:
-services.AddTransient(provider =>
-{
-    var factory = provider.GetRequiredService<JokeDbContextFactory>();
-    return factory.CreateDbContext();
-});
-// =====================================
 
 
 services.AddTransient<UtilsController>();

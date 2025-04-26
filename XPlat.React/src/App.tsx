@@ -1,35 +1,18 @@
-import { useState, useEffect } from "react";
+import DbListPage from "./pages/DbListPage";
+import { useState } from "react";
+import JokesListPage from "./pages/JokesListPage";
+import { selectDb } from "./services/DbHelperService/DbHelperService";
 
 function App() {
-  const [r, setR] = useState("No response");
-  const [er, setEr] = useState("");
-
-  useEffect(() => {
-    const fetchInfo = async () => {
-      try {
-        const res = await fetch("http://127.0.0.1:9696/api/joke");
-        if (!res.ok) {
-          console.log("err");
-          throw new Error(`Http Error, status: ${res.status}`);
-        }
-        const result = await res.json();
-        setR(result);
-      } catch (e: unknown) {
-        if (e instanceof Error) {
-          setEr(e.message);
-        } else {
-          setEr("An unknown error occurred");
-        }
-      }
-    };
-    fetchInfo();
-  }, []);
-
+  const [selectedDb, setSelectedDb] = useState<string>();
+  const pickDatabase = async (databaseName: string) => {
+    await selectDb(databaseName);
+    setSelectedDb(databaseName);
+  };
   return (
     <>
-      {!r && <p>Loading...</p>}
-      {r && <h1>{r}</h1>}
-      {er && <h1>{er}</h1>}
+      {!selectedDb && <DbListPage pickDatabase={pickDatabase} />}
+      {selectedDb && <JokesListPage databaseName={selectedDb} />}
     </>
   );
 }

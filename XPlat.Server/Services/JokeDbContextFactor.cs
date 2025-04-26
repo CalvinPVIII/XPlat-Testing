@@ -3,19 +3,11 @@ using XPlat.Models;
 
 namespace XPlat.Services
 {
-    public class JokeDbContextFactory
+    static public class JokeDbContextFactory
     {
-        private readonly CurrentDbService _currentDbService;
 
-        public JokeDbContextFactory(CurrentDbService currentDbService)
+        static public JokeTrackerDbContext Create(string dbPath)
         {
-            _currentDbService = currentDbService;
-        }
-
-        public JokeTrackerDbContext CreateDbContext()
-        {
-            var dbPath = _currentDbService.CurrentDbPath;
-
             if (string.IsNullOrEmpty(dbPath))
             {
                 throw new InvalidOperationException("No database selected.");
@@ -25,7 +17,9 @@ namespace XPlat.Services
                 .UseSqlite($"Data Source={dbPath}")
                 .Options;
 
-            return new JokeTrackerDbContext(options);
+            var context = new JokeTrackerDbContext(options);
+            context.Database.Migrate();
+            return context;
         }
     }
 
