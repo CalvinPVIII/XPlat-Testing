@@ -5,7 +5,7 @@ using EmbedIO.WebApi;
 using Microsoft.Extensions.DependencyInjection;
 using XPlat.Controllers;
 
-namespace XPlat
+namespace XPlat.Services
 {
     public class LocalWebServerService : IDisposable
     {
@@ -14,15 +14,15 @@ namespace XPlat
         public LocalWebServerService(IServiceProvider services)
         {
             var url = "http://127.0.0.1:9696/";
-
             _server = new WebServer(options => options.WithUrlPrefix(url))
-                .WithModule(new CorsModule("/api"))
-                .WithWebApi("/api", m =>
-                {
-                    // Use the service provider to resolve controllers with DI
-                    m.WithController(() => services.GetRequiredService<JokeController>());
-                    m.WithController(() => services.GetRequiredService<UtilsController>());
-                });
+      // Add CORS support to allow any origin
+      .WithModule(new CorsModule("/api"))
+    .WithWebApi("/api", m =>
+    {
+        m.WithController(() => services.GetRequiredService<JokeController>());
+        m.WithController(() => services.GetRequiredService<UtilsController>());
+    });
+
 
             _server.StateChanged += (s, e) =>
                 Console.WriteLine($"WebServer New State - {e.NewState}");

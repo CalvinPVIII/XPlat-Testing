@@ -9,10 +9,15 @@ interface Props {
 
 export default function DbListPage(props: Props) {
   const [databases, setDatabases] = useState<string[]>([]);
-
+  const [error, setError] = useState<string | undefined>();
   const fetchData = async () => {
-    const data = await getAllDatabases();
-    setDatabases(data);
+    try {
+      const data = await getAllDatabases();
+      setDatabases(data);
+    } catch (e: unknown) {
+      // @ts-expect-error error checking
+      setError(`There was an error: ${e.message}`);
+    }
   };
 
   useEffect(() => {
@@ -43,6 +48,11 @@ export default function DbListPage(props: Props) {
             <DatabaseIcon className="mx-auto h-12 w-12 text-gray-400" />
             <h3 className="mt-2 text-sm font-medium text-gray-900">No databases</h3>
             <p className="mt-1 text-sm text-gray-500">Get started by creating a new database.</p>
+            {error && (
+              <>
+                <h2 className="text-red-500">{error}</h2>
+              </>
+            )}
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
